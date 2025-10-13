@@ -1,8 +1,20 @@
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import SplashScreen from "./components/SplashScreen";
+import WelcomePage from "./pages/WelcomePage";
+
 function App() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-700 via-pink-500 to-indigo-500 text-white text-5xl font-bold">
-      GlowTrack ✨
-    </div>
+    <Router>
+      <Routes>
+        {/* Splash Screen */}
+        <Route path="/" element={<SplashScreen />} />
+
+        {/* Welcome Page */}
+        <Route path="/welcome" element={<WelcomePage />} />
+      </Routes>
+    </Router>
   );
 }
 

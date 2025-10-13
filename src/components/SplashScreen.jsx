@@ -1,33 +1,55 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function SplashScreen() {
   const navigate = useNavigate();
+  const [displayText, setDisplayText] = useState("");
+  const fullText = "Glow";
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate("/welcome");
-    }, 2500);
-    return () => clearTimeout(timer);
+    let currentIndex = 0;
+    const typingInterval = 3000 / fullText.length; 
+    let intervalId = null;
+    let finishTimer = null;
+
+    intervalId = setInterval(() => {
+      
+      setDisplayText(fullText.slice(0, currentIndex + 1));
+      currentIndex++;
+
+      if (currentIndex >= fullText.length) {
+        clearInterval(intervalId);
+                finishTimer = setTimeout(() => {
+          const splashDiv = document.getElementById("splash-screen");
+          if (splashDiv) {
+            splashDiv.style.transition = "opacity 0.5s ease-out";
+            splashDiv.style.opacity = 0;
+          }
+          setTimeout(() => navigate("/welcome"), 500); 
+        }, 500);
+      }
+    }, typingInterval);
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+      if (finishTimer) clearTimeout(finishTimer);
+    };
   }, [navigate]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-indigo-950 to-purple-900">
-      {/* Glow text */}
+    <div
+      id="splash-screen"
+      className="flex items-center justify-center min-h-screen bg-pink-900"
+    >
       <h1
-        className="text-6xl font-bold"
+        className="text-6xl"
         style={{
           fontFamily: "'Pacifico', cursive",
           color: "#FFC0CB",
-          textShadow: `
-            0 0 5px #FF69B4,
-            0 0 10px #FF69B4,
-            0 0 20px #FF1493,
-            0 0 30px #FF1493
-          `,
+          letterSpacing: "2px",
         }}
       >
-        Glow
+        {displayText}
       </h1>
     </div>
   );

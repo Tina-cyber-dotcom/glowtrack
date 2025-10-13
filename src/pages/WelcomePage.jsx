@@ -1,0 +1,46 @@
+import React from "react";
+import { Link } from "react-router-dom";
+
+export default function WelcomePage() {
+  return (
+    <div className= "flex flex-col items-center justify-center min-h-screen bg-pink-900 text-white px-6 animate fade in ">
+
+
+      {/* Tagline */}
+      <h1
+        className="text-5xl font-bold mb-2"
+        style={{
+          fontFamily: "'Pacifico', cursive",
+          color: "#FFC0CB",
+          textShadow: `
+            0 0 5px #FF69B4,
+            0 0 10px #FF69B4,
+            0 0 20px #FF1493,
+            0 0 30px #FF1493
+          `,
+        }}
+      >
+        Grow Glowing
+      </h1>
+
+      {/* Subtitle */}
+      <p
+        className="text-lg mb-6 text-center max-w-md"
+        style={{
+          color: "#FFB6C1",
+          fontStyle: "italic",
+        }}
+      >
+        Grow with intention, glow without limits.
+      </p>
+
+      {/* Calm Button */}
+      <Link
+        to="/login"
+        className="px-8 py-3 rounded-lg font-semibold transition bg-pink-300 text-gray-900 hover:bg-pink-400 hover:shadow-md"
+      >
+        Get Glowing
+      </Link>
+    </div>
+  );
+}
