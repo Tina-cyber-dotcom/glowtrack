@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const tabs = ["exercise", "nutrition", "progress", "mood", "water"];
   const quotes = [
     { text: "Small steps every day are still steps.", author: "Maya L." },
@@ -22,7 +24,15 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, []);
 
-  const darkText = "#C2185B"; 
+  const darkText = "#C2185B";
+
+  const handleTabClick = (tab) => {
+    if (tab === "exercise") {
+      navigate("/exercise"); 
+    } else {
+      setActiveTab(tab); 
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center p-4 bg-[#FFF8E7]">
@@ -47,10 +57,11 @@ export default function Dashboard() {
 
       <div className="w-full max-w-3xl mb-6 flex justify-center">
         <div className="flex justify-between items-center w-full bg-white/40 backdrop-blur-md rounded-3xl px-6 py-2 shadow-lg">
+          
           {["exercise", "nutrition"].map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => handleTabClick(tab)}
               className={`flex flex-col items-center text-sm ${
                 activeTab === tab ? "font-bold" : "opacity-80"
               }`}
@@ -68,7 +79,7 @@ export default function Dashboard() {
           {["progress", "mood", "water"].map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => handleTabClick(tab)}
               className={`flex flex-col items-center text-sm ${
                 activeTab === tab ? "font-bold" : "opacity-80"
               }`}

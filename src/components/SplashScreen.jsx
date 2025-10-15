@@ -13,13 +13,12 @@ export default function SplashScreen() {
     let finishTimer = null;
 
     intervalId = setInterval(() => {
-      
       setDisplayText(fullText.slice(0, currentIndex + 1));
       currentIndex++;
 
       if (currentIndex >= fullText.length) {
         clearInterval(intervalId);
-                finishTimer = setTimeout(() => {
+        finishTimer = setTimeout(() => {
           const splashDiv = document.getElementById("splash-screen");
           if (splashDiv) {
             splashDiv.style.transition = "opacity 0.5s ease-out";
@@ -39,7 +38,8 @@ export default function SplashScreen() {
   return (
     <div
       id="splash-screen"
-      className="flex items-center justify-center min-h-screen bg-pink-900"
+      className="flex items-center justify-center min-h-screen"
+      style={{ backgroundColor: "#FFF8E7" }}  
     >
       <h1
         className="text-6xl"

@@ -23,7 +23,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#FFF8E7]">
+    <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: "#FFF8E7" }}>
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-lg shadow-md w-80"

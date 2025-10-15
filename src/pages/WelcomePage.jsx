@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 
 export default function WelcomePage() {
   return (
-    <div className= "flex flex-col items-center justify-center min-h-screen bg-pink-900 text-white px-6 animate fade in ">
-
-
-      {/* Tagline */}
+    <div
+      className="flex flex-col items-center justify-center min-h-screen px-6"
+      style={{ backgroundColor: "#FFF8E7" }} 
+    >
       <h1
         className="text-5xl font-bold mb-2"
         style={{
@@ -23,7 +23,6 @@ export default function WelcomePage() {
         Grow Glowing
       </h1>
 
-      {/* Subtitle */}
       <p
         className="text-lg mb-6 text-center max-w-md"
         style={{
@@ -34,7 +33,6 @@ export default function WelcomePage() {
         Grow with intention, glow without limits.
       </p>
 
-      {/* Calm Button */}
       <Link
         to="/login"
         className="px-8 py-3 rounded-lg font-semibold transition bg-pink-300 text-gray-900 hover:bg-pink-400 hover:shadow-md"
