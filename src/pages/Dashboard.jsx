@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Button from "../components/Button"; // Correct path to your Button component
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -29,7 +30,6 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch exercises from WGER API
   useEffect(() => {
     if (!searchQuery && !muscleFilter) {
       setSearchResults([]);
@@ -53,7 +53,6 @@ export default function Dashboard() {
 
   const handleAddToWorkoutLog = async (exercise) => {
     try {
-      // Fetch full details via Endpoint 2
       const res = await axios.get(`https://wger.de/api/v2/exerciseinfo/${exercise.id}/`);
       const exerciseDetails = res.data;
       navigate("/workout-log", { state: { exercise: exerciseDetails } });
@@ -111,12 +110,7 @@ export default function Dashboard() {
                 className="flex justify-between items-center px-4 py-2 border-b border-gray-200 hover:bg-[#FFF0F5]"
               >
                 <span className="text-[#C2185B]">{exercise.name}</span>
-                <button
-                  onClick={() => handleAddToWorkoutLog(exercise)}
-                  className="text-white bg-[#C2185B] px-3 py-1 rounded-full text-sm hover:bg-[#A31545]"
-                >
-                  + Add
-                </button>
+                <Button onClick={() => handleAddToWorkoutLog(exercise)}>+ Add</Button>
               </div>
             ))}
           </div>
@@ -125,33 +119,27 @@ export default function Dashboard() {
 
       {/* START GLOWING Dropdown */}
       <div className="w-full max-w-3xl mb-6 flex flex-col items-center mt-6">
-        <button
-          onClick={() => setShowDropdown(!showDropdown)}
-          className="bg-[#F7B9C6] text-white px-6 py-3 rounded-full shadow-lg text-lg font-semibold"
-        >
+        <Button onClick={() => setShowDropdown(!showDropdown)}>
           START GLOWING
-        </button>
+        </Button>
 
         {showDropdown && (
           <div className="mt-4 flex flex-col w-64 bg-white/90 backdrop-blur-md rounded-xl shadow-lg">
-            <button
+            <Button
+              className="rounded-t-xl"
               onClick={() => navigate("/workout-log")}
-              className="px-4 py-3 hover:bg-[#FFF0F5] text-center text-[#C2185B] font-medium rounded-t-xl"
             >
               📝 Workout Log
-            </button>
-            <button
-              onClick={() => navigate("/workout-history")}
-              className="px-4 py-3 hover:bg-[#FFF0F5] text-center text-[#C2185B] font-medium"
-            >
+            </Button>
+            <Button onClick={() => navigate("/workout-history")}>
               📚 Workout History
-            </button>
-            <button
+            </Button>
+            <Button
+              className="rounded-b-xl"
               onClick={() => navigate("/progress-chart")}
-              className="px-4 py-3 hover:bg-[#FFF0F5] text-center text-[#C2185B] font-medium rounded-b-xl"
             >
               📈 My Progress 🙂
-            </button>
+            </Button>
           </div>
         )}
       </div>

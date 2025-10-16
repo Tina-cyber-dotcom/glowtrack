@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Button from "../components/Button";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -23,40 +24,43 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: "#FFF8E7" }}>
+    <div
+      className="flex items-center justify-center min-h-screen"
+      style={{ backgroundColor: "#FFF8E7" }}
+    >
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-md w-80"
+        className="bg-white p-8 rounded-xl shadow-md w-80 flex flex-col gap-4"
       >
         <h1
-          className="text-3xl text-center mb-6"
+          className="text-3xl text-center"
           style={{ fontFamily: "'Pacifico', cursive", color: "#FFB6C1" }}
         >
           GlowTrack
         </h1>
+
         {error && (
-          <p className="text-sm text-red-500 text-center mb-4">{error}</p>
+          <p className="text-sm text-red-500 text-center">{error}</p>
         )}
+
         <input
           type="email"
           placeholder="Email"
-          className="w-full p-2 mb-4 border rounded"
+          className="w-full p-2 border rounded"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           placeholder="Password"
-          className="w-full p-2 mb-6 border rounded"
+          className="w-full p-2 border rounded"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button
-          type="submit"
-          className="w-full py-2 rounded bg-pink-300 hover:bg-pink-400 transition"
-        >
+
+        <Button type="submit" className="w-full">
           Log In
-        </button>
+        </Button>
       </form>
     </div>
   );

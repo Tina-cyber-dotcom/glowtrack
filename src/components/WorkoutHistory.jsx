@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import Navbar from "./Navbar";
 
 export default function WorkoutHistory() {
-  const [history, setHistory] = useState([
+  const [history] = useState([
     {
       id: 1,
       date: "2025-10-15",
@@ -17,10 +18,8 @@ export default function WorkoutHistory() {
     },
   ]);
 
-  const darkText = "#C2185B";
-
   return (
-    <div className="min-h-screen flex flex-col items-center p-4 bg-[#FFF8E7]">
+    <div className="min-h-screen flex flex-col items-center p-4 bg-[#FFF8E7] pb-24">
       {/* Header */}
       <h1
         style={{ fontFamily: "'Pacifico', cursive" }}
@@ -42,7 +41,10 @@ export default function WorkoutHistory() {
               <h2 className="text-[#C2185B] font-semibold mb-2">{session.date}</h2>
               <ul className="space-y-2">
                 {session.exercises.map((ex, idx) => (
-                  <li key={idx} className="flex justify-between items-center bg-[#FFF0F5] rounded-xl p-2">
+                  <li
+                    key={idx}
+                    className="flex justify-between items-center bg-[#FFF0F5] rounded-xl p-2"
+                  >
                     <span className="text-[#C2185B]">• {ex.name}</span>
                     <span className="text-[#C2185B]/70 text-sm">
                       {ex.sets} sets × {ex.reps} reps
@@ -54,6 +56,9 @@ export default function WorkoutHistory() {
           ))
         )}
       </div>
+
+      {/* Navbar fixed at bottom */}
+      <Navbar />
     </div>
   );
 }

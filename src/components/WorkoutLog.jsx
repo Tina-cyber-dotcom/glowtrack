@@ -1,20 +1,21 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+import Navbar from "./Navbar";
+import Button from "./Button";
 
 export default function WorkoutLog() {
   const location = useLocation();
+
   const [workoutExercises, setWorkoutExercises] = useState(
     location.state?.exercise ? [location.state.exercise] : []
   );
-
-  const darkText = "#C2185B";
 
   const handleRemoveExercise = (id) => {
     setWorkoutExercises((prev) => prev.filter((ex) => ex.id !== id));
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center p-4 bg-[#FFF8E7]">
+    <div className="min-h-screen flex flex-col items-center p-4 bg-[#FFF8E7] pb-24">
       {/* Header */}
       <h1
         style={{ fontFamily: "'Pacifico', cursive" }}
@@ -23,7 +24,7 @@ export default function WorkoutLog() {
         Work Log <span className="text-pink-300 text-3xl">🌸</span>
       </h1>
 
-      {/* Description / instructions */}
+      {/* Instructions */}
       <p className="mt-4 text-[#C2185B] text-center px-4">
         Track your exercises here. Add new exercises from the Dashboard search.
       </p>
@@ -47,21 +48,21 @@ export default function WorkoutLog() {
                       <p
                         className="text-[#C2185B]/70 text-sm"
                         dangerouslySetInnerHTML={{ __html: exercise.description }}
-                      ></p>
+                      />
                     )}
                   </div>
                 </div>
-                <button
-                  onClick={() => handleRemoveExercise(exercise.id)}
-                  className="text-white bg-[#C2185B] px-3 py-1 rounded-full text-sm hover:bg-[#A31545]"
-                >
+                <Button onClick={() => handleRemoveExercise(exercise.id)}>
                   Remove
-                </button>
+                </Button>
               </li>
             ))}
           </ul>
         )}
       </div>
+
+      {/* Navbar fixed at bottom */}
+      <Navbar />
     </div>
   );
 }

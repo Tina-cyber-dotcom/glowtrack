@@ -1,11 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Button from "../components/Button"; // make sure the path is correct
 
 export default function WelcomePage() {
+  const navigate = useNavigate();
+
   return (
     <div
       className="flex flex-col items-center justify-center min-h-screen px-6"
-      style={{ backgroundColor: "#FFF8E7" }} 
+      style={{ backgroundColor: "#FFF8E7" }}
     >
       <h1
         className="text-5xl font-bold mb-2"
@@ -33,12 +36,9 @@ export default function WelcomePage() {
         Grow with intention, glow without limits.
       </p>
 
-      <Link
-        to="/login"
-        className="px-8 py-3 rounded-lg font-semibold transition bg-pink-300 text-gray-900 hover:bg-pink-400 hover:shadow-md"
-      >
+      <Button onClick={() => navigate("/login")} className="px-8 py-3 text-gray-900">
         Get Glowing
-      </Link>
+      </Button>
     </div>
   );
 }
