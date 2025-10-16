@@ -1,25 +1,22 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-import SplashScreen from "./components/SplashScreen";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import SplashScreen from "./components/SplashScreen"; 
 import WelcomePage from "./pages/WelcomePage";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
-import Exercises from "./pages/Exercises"; 
 
-function App() {
+export default function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<SplashScreen />} />
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/exercise" element={<Exercises />} /> 
+        <Route path="/dashboard/*" element={<Dashboard />} />
+        <Route path="*" element={<Navigate to="/welcome" replace />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
 
-export default App;
 
