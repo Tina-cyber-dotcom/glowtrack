@@ -1,17 +1,58 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import Button from "./Button";
 
 export default function WorkoutLog() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [workoutExercises, setWorkoutExercises] = useState(
     location.state?.exercise ? [location.state.exercise] : []
   );
+  const [saveState, setSaveState] = useState({
+    loading: false,
+    error: null,
+    success: false
+  });
 
   const handleRemoveExercise = (id) => {
     setWorkoutExercises((prev) => prev.filter((ex) => ex.id !== id));
+  };
+
+  const handleSaveWorkout = async () => {
+    if (workoutExercises.length === 0) {
+      setSaveState({ loading: false, error: "No exercises to save", success: false });
+      return;
+    }
+
+    setSaveState({ loading: true, error: null, success: false });
+
+    try {
+      // Save to localStorage for now (later we can connect to a backend)
+      const existingLogs = JSON.parse(localStorage.getItem('workoutLogs') || '[]');
+      const newLog = {
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        exercises: workoutExercises,
+        totalExercises: workoutExercises.length,
+        duration: 0 // You can add duration tracking later
+      };
+      
+      existingLogs.push(newLog);
+      localStorage.setItem('workoutLogs', JSON.stringify(existingLogs));
+      
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setSaveState({ loading: false, error: null, success: true });
+      setTimeout(() => {
+        navigate("/workout-history");
+      }, 1500);
+    } catch (err) {
+      console.error("Save workout error:", err);
+      setSaveState({ loading: false, error: "Failed to save workout", success: false });
+    }
   };
 
   return (
@@ -58,6 +99,31 @@ export default function WorkoutLog() {
               </li>
             ))}
           </ul>
+        )}
+        
+        {/* Save Workout Button */}
+        {workoutExercises.length > 0 && (
+          <div className="mt-6 flex flex-col items-center gap-3">
+            <Button 
+              onClick={handleSaveWorkout}
+              disabled={saveState.loading}
+              className={saveState.loading ? "opacity-50 cursor-not-allowed" : ""}
+            >
+              {saveState.loading ? "Saving..." : "💾 Save Workout"}
+            </Button>
+            
+            {saveState.error && (
+              <div className="text-red-600 text-sm bg-red-100 px-3 py-2 rounded-lg">
+                ❌ {saveState.error}
+              </div>
+            )}
+            
+            {saveState.success && (
+              <div className="text-green-600 text-sm bg-green-100 px-3 py-2 rounded-lg">
+                ✅ Workout saved! Redirecting to history...
+              </div>
+            )}
+          </div>
         )}
       </div>
 

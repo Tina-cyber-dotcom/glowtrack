@@ -1,63 +1,95 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
+import Button from "./Button";
 
 export default function WorkoutHistory() {
-  const [history] = useState([
-    {
-      id: 1,
-      date: "2025-10-15",
-      exercises: [
-        { name: "Bodyweight Squat", sets: 3, reps: 12 },
-        { name: "Push-ups", sets: 3, reps: 10 },
-      ],
-    },
-    {
-      id: 2,
-      date: "2025-10-14",
-      exercises: [{ name: "Pull-ups", sets: 3, reps: 8 }],
-    },
-  ]);
+  const [workouts, setWorkouts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadWorkouts();
+  }, []);
+
+  const loadWorkouts = () => {
+    try {
+      const saved = localStorage.getItem('workoutLogs');
+      const data = saved ? JSON.parse(saved) : [];
+      setWorkouts(data);
+    } catch (error) {
+      console.error('Error loading workouts:', error);
+      setWorkouts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteWorkout = (workoutId) => {
+    if (window.confirm('Are you sure you want to delete this workout?')) {
+      try {
+        const updated = workouts.filter(w => w.id !== workoutId);
+        localStorage.setItem('workoutLogs', JSON.stringify(updated));
+        setWorkouts(updated);
+      } catch (error) {
+        console.error('Error deleting workout:', error);
+      }
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FFF8E7] flex items-center justify-center">
+        <p className="text-[#C2185B] text-xl">Loading workouts... 💪</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex flex-col items-center p-4 bg-[#FFF8E7] pb-24">
+    <div className="min-h-screen bg-[#FFF8E7] pb-24">
       {/* Header */}
-      <h1
-        style={{ fontFamily: "'Pacifico', cursive" }}
-        className="text-4xl mt-6 text-[#C2185B] text-center flex items-center gap-2"
-      >
-        Workout History <span className="text-pink-300 text-3xl">🌸</span>
-      </h1>
-
-      {/* History List */}
-      <div className="mt-6 w-full max-w-3xl flex flex-col gap-6">
-        {history.length === 0 ? (
-          <p className="text-[#C2185B]/80 text-center">No workouts logged yet.</p>
+      <div className="p-4">
+        <h1 className="text-3xl font-bold text-[#C2185B] text-center mb-6">
+          Workout History 🌸
+        </h1>
+        
+        {/* Content */}
+        {workouts.length === 0 ? (
+          <div className="bg-white/60 rounded-xl p-6 text-center">
+            <p className="text-[#C2185B] text-lg mb-2">No workouts yet! 💪</p>
+            <p className="text-[#C2185B]/70">Save a workout to see it here.</p>
+          </div>
         ) : (
-          history.map((session) => (
-            <div
-              key={session.id}
-              className="bg-white/60 backdrop-blur-md rounded-xl p-4 shadow-lg"
-            >
-              <h2 className="text-[#C2185B] font-semibold mb-2">{session.date}</h2>
-              <ul className="space-y-2">
-                {session.exercises.map((ex, idx) => (
-                  <li
-                    key={idx}
-                    className="flex justify-between items-center bg-[#FFF0F5] rounded-xl p-2"
+          <div className="space-y-4">
+            {workouts.map((workout) => (
+              <div key={workout.id} className="bg-white/60 rounded-xl p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-[#C2185B] font-semibold">
+                    {new Date(workout.date).toDateString()}
+                  </h3>
+                  <Button 
+                    onClick={() => deleteWorkout(workout.id)}
+                    className="bg-red-200 text-red-700 px-2 py-1 text-sm"
                   >
-                    <span className="text-[#C2185B]">• {ex.name}</span>
-                    <span className="text-[#C2185B]/70 text-sm">
-                      {ex.sets} sets × {ex.reps} reps
+                    Delete
+                  </Button>
+                </div>
+                
+                <p className="text-[#C2185B]/80 text-sm mb-2">
+                  {workout.exercises?.length || 0} exercises
+                </p>
+                
+                {workout.exercises?.map((exercise, idx) => (
+                  <div key={idx} className="bg-[#FFF0F5] rounded p-2 mb-1">
+                    <span className="text-[#C2185B] font-medium">
+                      {exercise.name || `Exercise ${idx + 1}`}
                     </span>
-                  </li>
+                  </div>
                 ))}
-              </ul>
-            </div>
-          ))
+              </div>
+            ))}
+          </div>
         )}
       </div>
-
-      {/* Navbar fixed at bottom */}
+      
       <Navbar />
     </div>
   );

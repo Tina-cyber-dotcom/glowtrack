@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { exerciseAPI } from "../services/wgerAPI";
 import Button from "../components/Button"; // Correct path to your Button component
 
 export default function Dashboard() {
@@ -9,6 +9,10 @@ export default function Dashboard() {
   const [muscleFilter, setMuscleFilter] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  
+  // New state for better UX
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState(null);
 
   const quotes = [
     { text: "Small steps every day are still steps.", author: "Maya L." },
@@ -31,33 +35,51 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
+    // Clear results if no search criteria
     if (!searchQuery && !muscleFilter) {
       setSearchResults([]);
+      setSearchError(null);
+      setIsSearching(false);
       return;
     }
 
     const fetchExercises = async () => {
-      try {
-        let url = `https://wger.de/api/v2/exercise/?language=2`;
-        if (searchQuery) url += `&search=${searchQuery}`;
-        if (muscleFilter) url += `&muscle=${muscleFilter}`;
-        const res = await axios.get(url);
-        setSearchResults(res.data.results);
-      } catch (err) {
-        console.error("Error fetching exercises:", err);
+      setIsSearching(true);
+      setSearchError(null);
+      
+      // Call our API service
+      const result = await exerciseAPI.searchExercises(searchQuery, muscleFilter);
+      
+      if (result.success) {
+        setSearchResults(result.data);
+        setSearchError(null);
+      } else {
+        setSearchResults([]);
+        setSearchError(result.error);
       }
+      
+      setIsSearching(false);
     };
 
-    fetchExercises();
+    // Add small delay to avoid too many API calls while typing
+    const timeoutId = setTimeout(fetchExercises, 300);
+    
+    // Cleanup timeout if user keeps typing
+    return () => clearTimeout(timeoutId);
   }, [searchQuery, muscleFilter]);
 
   const handleAddToWorkoutLog = async (exercise) => {
-    try {
-      const res = await axios.get(`https://wger.de/api/v2/exerciseinfo/${exercise.id}/`);
-      const exerciseDetails = res.data;
-      navigate("/workout-log", { state: { exercise: exerciseDetails } });
-    } catch (err) {
-      console.error("Error fetching exercise details:", err);
+    // Get detailed exercise info before navigating
+    const result = await exerciseAPI.getExerciseDetails(exercise.id);
+    
+    
+    if (result.success) {
+      // Navigate with detailed exercise data
+      navigate("/workout-log", { state: { exercise: result.data } });
+    } else {
+      // If details fetch fails, still navigate with basic exercise info
+      console.warn("Could not fetch exercise details, using basic info");
+      navigate("/workout-log", { state: { exercise } });
     }
   };
 
@@ -101,8 +123,22 @@ export default function Dashboard() {
           <option value="6">Legs</option>
         </select>
 
-        {/* Search Results */}
-        {searchResults.length > 0 && (
+        {/* Search Results - Loading State */}
+        {isSearching && (
+          <div className="mt-2 bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-4 text-center">
+            <div className="text-[#C2185B]">🔍 Searching exercises...</div>
+          </div>
+        )}
+        
+        {/* Search Results - Error State */}
+        {searchError && !isSearching && (
+          <div className="mt-2 bg-red-100 rounded-xl shadow-lg p-4 text-center">
+            <div className="text-red-600">❌ {searchError}</div>
+          </div>
+        )}
+        
+        {/* Search Results - Success State */}
+        {searchResults.length > 0 && !isSearching && !searchError && (
           <div className="mt-2 bg-white/90 backdrop-blur-md rounded-xl shadow-lg max-h-64 overflow-y-auto">
             {searchResults.map((exercise) => (
               <div
@@ -113,6 +149,16 @@ export default function Dashboard() {
                 <Button onClick={() => handleAddToWorkoutLog(exercise)}>+ Add</Button>
               </div>
             ))}
+          </div>
+        )}
+        
+        {/* Search Results - No Results State */}
+        {(searchQuery || muscleFilter) && !isSearching && searchResults.length === 0 && !searchError && (
+          <div className="mt-2 bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-4 text-center">
+            <div className="text-[#C2185B]/70">
+              No exercises found for "{searchQuery}"
+              {muscleFilter && " in selected muscle group"}
+            </div>
           </div>
         )}
       </div>
